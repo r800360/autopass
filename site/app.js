@@ -6,6 +6,7 @@ const ctx = canvas.getContext("2d");
 const labels = {
   autopass: "AutoPass-Gen", no_pass: "Never pass", always_pass: "Always pass",
   first_release: "Fixed thresholds", no_critic: "Critic disabled", imitation: "Imitation steering",
+  autopass_rgbd: "NanoDet RGB-depth", autopass_imitation: "Imitation steering",
   llm_plan: "LLM tool plan", llm_react: "LLM step-by-step", llm_direct: "LLM direct",
 };
 const phaseLabel = { follow: "Follow", lane_change: "Change lane", overtake: "Overtake",

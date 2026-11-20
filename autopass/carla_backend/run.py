@@ -78,7 +78,7 @@ def run_one(client, scn: Scenario, policy_name: str, out: Path, *, planner: Any 
             ep.on_tick = capture
         t0 = time.time()
         result = ep.run()
-        result.update(backend="carla", seed=seed, perception=world.perception, policy_label=policy_name,
+        result.update(backend="carla", seed=seed, perception=world.perception, policy_label=label or policy_name,
                       wall_s=round(time.time() - t0, 1), passing_side=world.passing_side,
                       collision_with=world.collision_with, min_follow_s=policy.min_follow_s)
         if world.detector:

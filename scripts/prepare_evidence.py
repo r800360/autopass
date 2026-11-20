@@ -40,6 +40,7 @@ def recorded(path: Path):
     rows = []
     for name in sorted(path.glob("*/*/result.json")):
         value = json.loads(name.read_text(encoding="utf-8"))
+        value["policy_label"] = name.parent.parent.name
         rows.append(value)
     finished = {(r["scenario_id"], r.get("policy_label", r["policy"])) for r in rows}
     for name in sorted(path.glob("*/*/error.json")):
