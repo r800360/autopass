@@ -1,0 +1,312 @@
+{
+  "request": {
+    "origin": "Depot",
+    "destination": "Clinic",
+    "urgency": "high",
+    "deadline_s": 40
+  },
+  "replan": true,
+  "arrived": true,
+  "elapsed_s": 31.35,
+  "deadline_met": true,
+  "trace": [
+    {
+      "kind": "plan",
+      "remaining": [
+        "Market",
+        "Main",
+        "Clinic"
+      ],
+      "eta_s": 18.53
+    },
+    {
+      "kind": "segment",
+      "from": "Depot",
+      "to": "Market",
+      "t_s": 11.15,
+      "denials": 23,
+      "passed": false,
+      "arrived": true
+    },
+    {
+      "kind": "reroute",
+      "at": "Market",
+      "remaining": [
+        "Bypass",
+        "Clinic"
+      ],
+      "prior_eta_s": 24.26,
+      "new_eta_s": 17.45,
+      "reason": "repeated pass denials"
+    },
+    {
+      "kind": "segment",
+      "from": "Market",
+      "to": "Bypass",
+      "t_s": 21.25,
+      "denials": 1,
+      "passed": true,
+      "arrived": true
+    },
+    {
+      "kind": "segment",
+      "from": "Bypass",
+      "to": "Clinic",
+      "t_s": 31.35,
+      "denials": 1,
+      "passed": true,
+      "arrived": true
+    }
+  ],
+  "segments": [
+    {
+      "road": {
+        "source": "Depot",
+        "target": "Market",
+        "length_m": 70,
+        "limit_mps": 12,
+        "corridor": "Main",
+        "scenario": "s24"
+      },
+      "result": {
+        "scenario_id": "s24_t04_blind_spot_pacer",
+        "policy": "autopass",
+        "planner": "rule",
+        "gates": "physics",
+        "expected": "?",
+        "success": true,
+        "odometry_m": 70.19,
+        "steering": "waypoint",
+        "steering_fallbacks": 0,
+        "yielded": true,
+        "final_phase": "follow",
+        "collision": false,
+        "offroad": false,
+        "pass_attempted": false,
+        "overtake_completed": false,
+        "unsafe_commit": false,
+        "unwarranted_commit": false,
+        "commit_blockers": [],
+        "aborts": 0,
+        "rushed": false,
+        "merge_trigger": null,
+        "t_commit_s": null,
+        "time_to_clear_s": null,
+        "duration_s": 11.15,
+        "mean_speed_mps": 6.3,
+        "distance_m": 69.9,
+        "time_to_80m_s": null,
+        "max_lane_dev_m": 0.0,
+        "max_overshoot_m": 0.0,
+        "min_gap_m": 18.01,
+        "min_ttc_s": 15.1,
+        "max_induced_decel": 0.0,
+        "agency": {
+          "cycles": 23,
+          "tool_calls": 86,
+          "tool_histogram": {
+            "sense_front": 12,
+            "sense_passing_lane": 23,
+            "sense_rear": 23,
+            "check_corridor": 5,
+            "sense_blind_spot": 23
+          },
+          "denials": 23,
+          "revisions": 109,
+          "perception_calls": 81,
+          "reflex_calls": 223,
+          "always_on_calls": 892,
+          "llm_calls": 0,
+          "llm_latency_s": 0.0,
+          "llm_tokens": 0,
+          "llm_failures": 0
+        },
+        "backend": "kinematic",
+        "seed": 0,
+        "perception": "oracle"
+      },
+      "events": [
+        {
+          "t": 11.15,
+          "kind": "segment_complete"
+        }
+      ]
+    },
+    {
+      "road": {
+        "source": "Market",
+        "target": "Bypass",
+        "length_m": 92,
+        "limit_mps": 11,
+        "corridor": "Bypass",
+        "scenario": "s06"
+      },
+      "result": {
+        "scenario_id": "s06_t05_multilane_pass",
+        "policy": "autopass",
+        "planner": "rule",
+        "gates": "physics",
+        "expected": "?",
+        "success": true,
+        "odometry_m": 103.02,
+        "steering": "waypoint",
+        "steering_fallbacks": 0,
+        "yielded": false,
+        "final_phase": "done",
+        "collision": false,
+        "offroad": false,
+        "pass_attempted": true,
+        "overtake_completed": true,
+        "unsafe_commit": false,
+        "unwarranted_commit": false,
+        "commit_blockers": [],
+        "aborts": 0,
+        "rushed": false,
+        "merge_trigger": "vision",
+        "t_commit_s": 0.5,
+        "time_to_clear_s": 7.3,
+        "duration_s": 10.1,
+        "mean_speed_mps": 10.21,
+        "distance_m": 102.2,
+        "time_to_80m_s": 8.1,
+        "max_lane_dev_m": 0.0,
+        "max_overshoot_m": 0.0,
+        "min_gap_m": 13.66,
+        "min_ttc_s": 4.63,
+        "max_induced_decel": 0.0,
+        "agency": {
+          "cycles": 2,
+          "tool_calls": 9,
+          "tool_histogram": {
+            "sense_front": 2,
+            "sense_passing_lane": 2,
+            "sense_rear": 2,
+            "check_corridor": 1,
+            "sense_blind_spot": 2
+          },
+          "denials": 1,
+          "revisions": 10,
+          "perception_calls": 112,
+          "reflex_calls": 202,
+          "always_on_calls": 808,
+          "llm_calls": 0,
+          "llm_latency_s": 0.0,
+          "llm_tokens": 0,
+          "llm_failures": 0
+        },
+        "backend": "kinematic",
+        "seed": 1,
+        "perception": "oracle"
+      },
+      "events": [
+        {
+          "t": 0.5,
+          "kind": "commit",
+          "truth_ok": true,
+          "truth_blockers": []
+        },
+        {
+          "t": 8.35,
+          "kind": "merge_back",
+          "trigger": "vision"
+        },
+        {
+          "t": 10.05,
+          "kind": "done"
+        },
+        {
+          "t": 10.1,
+          "kind": "segment_complete"
+        }
+      ]
+    },
+    {
+      "road": {
+        "source": "Bypass",
+        "target": "Clinic",
+        "length_m": 100,
+        "limit_mps": 11,
+        "corridor": "Bypass",
+        "scenario": "s08"
+      },
+      "result": {
+        "scenario_id": "s08_t05_wet_pass",
+        "policy": "autopass",
+        "planner": "rule",
+        "gates": "physics",
+        "expected": "?",
+        "success": true,
+        "odometry_m": 103.02,
+        "steering": "waypoint",
+        "steering_fallbacks": 0,
+        "yielded": false,
+        "final_phase": "done",
+        "collision": false,
+        "offroad": false,
+        "pass_attempted": true,
+        "overtake_completed": true,
+        "unsafe_commit": false,
+        "unwarranted_commit": false,
+        "commit_blockers": [],
+        "aborts": 0,
+        "rushed": false,
+        "merge_trigger": "vision",
+        "t_commit_s": 0.5,
+        "time_to_clear_s": 7.3,
+        "duration_s": 10.1,
+        "mean_speed_mps": 10.21,
+        "distance_m": 102.2,
+        "time_to_80m_s": 8.1,
+        "max_lane_dev_m": 0.0,
+        "max_overshoot_m": 0.0,
+        "min_gap_m": 13.66,
+        "min_ttc_s": 4.63,
+        "max_induced_decel": 0.0,
+        "agency": {
+          "cycles": 2,
+          "tool_calls": 9,
+          "tool_histogram": {
+            "sense_front": 2,
+            "sense_passing_lane": 2,
+            "sense_rear": 2,
+            "check_corridor": 1,
+            "sense_blind_spot": 2
+          },
+          "denials": 1,
+          "revisions": 10,
+          "perception_calls": 112,
+          "reflex_calls": 202,
+          "always_on_calls": 808,
+          "llm_calls": 0,
+          "llm_latency_s": 0.0,
+          "llm_tokens": 0,
+          "llm_failures": 0
+        },
+        "backend": "kinematic",
+        "seed": 2,
+        "perception": "oracle"
+      },
+      "events": [
+        {
+          "t": 0.5,
+          "kind": "commit",
+          "truth_ok": true,
+          "truth_blockers": []
+        },
+        {
+          "t": 8.35,
+          "kind": "merge_back",
+          "trigger": "vision"
+        },
+        {
+          "t": 10.05,
+          "kind": "done"
+        },
+        {
+          "t": 10.1,
+          "kind": "segment_complete"
+        }
+      ]
+    }
+  ]
+}

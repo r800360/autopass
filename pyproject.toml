@@ -1,0 +1,39 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "autopass"
+version = "2.0.0"
+description = "AutoPass-Gen: a vision-grounded agentic system for urgency-aware overtaking, with a deterministic safety critic."
+readme = "README.md"
+requires-python = ">=3.10"
+license = { text = "MIT" }
+authors = [
+  { name = "Rohan Sachdeva" },
+  { name = "Xinwei Mai" },
+  { name = "Pranav Prabu" },
+  { name = "Rathang Pandit" },
+]
+# The decision core and the lightweight simulator are pure standard library on purpose:
+# the same files run in CPython, in CI, and in the browser (Pyodide).
+dependencies = []
+
+[project.optional-dependencies]
+viz = ["numpy>=1.26", "pillow>=10", "matplotlib>=3.8", "imageio>=2.34", "imageio-ffmpeg>=0.5"]
+carla = ["carla==0.9.16", "numpy>=1.26", "pillow>=10", "opencv-python-headless>=4.9", "imageio>=2.34", "imageio-ffmpeg>=0.5"]
+fit = ["numpy>=1.26"]
+dev = ["pytest>=8"]
+
+[project.scripts]
+autopass = "autopass.cli:main"
+
+[tool.setuptools.packages.find]
+include = ["autopass*"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-q"
+
+[tool.setuptools.package-data]
+"autopass.core" = ["steering_model.json"]

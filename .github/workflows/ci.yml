@@ -1,0 +1,28 @@
+name: Tests
+on:
+  push:
+    branches: [main]
+    paths-ignore: ["site/data/**", "site/media/**"]
+  pull_request:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  tests:
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - { os: ubuntu-latest, python: "3.10" }
+          - { os: windows-latest, python: "3.12" }
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-python@v6
+        with:
+          python-version: ${{ matrix.python }}
+      - run: python -m pip install ".[dev,fit]"
+      - run: python -m pytest
+      - run: autopass run s17 --trace runs/check.json.gz
+      - run: node --check site/app.js
+      - run: node --check site/worker.js

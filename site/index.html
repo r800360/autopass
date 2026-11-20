@@ -1,0 +1,145 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="AutoPass-Gen studies when a simulated vehicle should wait, yield, or overtake. Inspect actual CARLA recordings and run the decision stack in your browser.">
+  <meta name="theme-color" content="#0c1616">
+  <title>AutoPass-Gen · Overtaking under uncertainty</title>
+  <link rel="icon" href="mark.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="styles.css">
+  <script type="module" src="app.js"></script>
+</head>
+<body>
+  <a class="skip" href="#main">Skip to content</a>
+  <header class="masthead">
+    <a class="wordmark" href="./"><img src="mark.svg" width="30" height="30" alt=""> AutoPass-Gen</a>
+    <nav aria-label="Primary navigation">
+      <a href="#lab">Interactive lab</a><a href="#findings">Findings</a>
+      <a href="https://github.com/r800360/autopass">Source</a>
+    </nav>
+  </header>
+
+  <main id="main">
+    <section class="hero wrap" aria-labelledby="hero-title">
+      <div class="hero-copy">
+        <p class="eyebrow">Autonomous driving research in simulation</p>
+        <h1 id="hero-title">When is it safe<br>to overtake?</h1>
+        <p class="lede">AutoPass-Gen gathers traffic evidence, tests a proposed pass against physical constraints, and executes the maneuver in CARLA.</p>
+        <div class="actions">
+          <a class="button primary" href="#lab">Inspect a run</a>
+          <a class="button secondary" href="#findings">See the results</a>
+        </div>
+      </div>
+      <figure class="hero-film">
+        <div class="film-frame">
+          <video id="hero-video" controls playsinline preload="metadata" poster="media/clear.webp" src="media/clear.mp4" aria-label="CARLA recording with front and overhead views">
+            <a href="media/clear.mp4">Download the CARLA recording</a>
+          </video>
+        </div>
+        <figcaption><span class="status-dot"></span><span id="hero-caption">CARLA 0.9.16 · Clear motorway pass · Ego camera and overhead view</span></figcaption>
+      </figure>
+    </section>
+
+    <section class="overview" aria-label="Evaluation at a glance">
+      <div class="wrap stats">
+        <div><strong id="stat-catalog">34</strong><span>Authored scenarios in the kinematic catalog</span></div>
+        <div><strong id="stat-draws">500</strong><span>Seeded test draws per sampled policy</span></div>
+        <div><strong id="stat-towns">4</strong><span>CARLA towns in the validation campaign</span></div>
+      </div>
+    </section>
+
+    <section id="lab" class="wrap section">
+      <div class="section-intro">
+        <div><p class="eyebrow">Interactive lab</p><h2>Follow the decision.</h2></div>
+        <p>Replay synchronized observations and verdicts. Change the policy or urgency to run the same Python core locally in your browser.</p>
+      </div>
+      <div class="lab">
+        <div class="mode-bar" role="tablist" aria-label="Lab mode">
+          <button id="tab-replay" role="tab" aria-selected="true" aria-controls="panel-replay" type="button">Recorded evidence</button>
+          <button id="tab-sim" role="tab" aria-selected="false" aria-controls="panel-sim" type="button">Run a scenario</button>
+          <button id="tab-trip" role="tab" aria-selected="false" aria-controls="panel-trip" type="button">Plan a trip</button>
+        </div>
+        <div class="panel" id="panel-replay" role="tabpanel" aria-labelledby="tab-replay">
+          <label class="control">Recording
+            <select id="replay-select" aria-label="Saved recording"></select>
+          </label>
+          <p id="replay-note" class="muted"></p>
+        </div>
+        <form class="panel" id="panel-sim" role="tabpanel" aria-labelledby="tab-sim" hidden>
+          <label class="control wide">Scenario<select id="scenario"></select></label>
+          <label class="control">Policy<select id="policy">
+            <option value="autopass">AutoPass-Gen</option><option value="no_pass">Never pass</option>
+            <option value="always_pass">Always pass</option><option value="first_release">Fixed thresholds</option>
+          </select></label>
+          <label class="control">Urgency<select id="urgency">
+            <option value="">Scenario default</option><option>high</option><option>medium</option><option>low</option>
+          </select></label>
+          <label class="control">Sensing<select id="profile">
+            <option value="oracle">Geometric model</option><option value="degraded">With noise and misses</option>
+          </select></label>
+          <button class="button primary" id="run-scenario" type="submit">Run simulation</button>
+        </form>
+        <form class="panel" id="panel-trip" role="tabpanel" aria-labelledby="tab-trip" hidden>
+          <label class="control wide">Trip request<input value="Depot to Clinic, urgent, within 33 seconds" maxlength="160" id="trip-input"></label>
+          <button class="button primary" id="run-trip" type="submit">Compare routes</button>
+        </form>
+        <p id="activity" class="activity" role="status" aria-live="polite"></p>
+        <div id="maneuver-view">
+          <div class="viewer">
+            <div class="scene">
+              <div class="scene-head"><span id="trace-source" class="stamp">Loading trace</span><span id="clock" class="mono">0.00 s</span></div>
+              <canvas id="road" aria-label="Top-down view of the ego vehicle and surrounding traffic">Use the run trace below to inspect vehicle activity.</canvas>
+              <div class="scene-legend" aria-label="Vehicle legend"><span class="ego">Ego</span><span class="lead">Lead</span><span class="other">Traffic</span></div>
+            </div>
+            <div class="inspector">
+              <p class="eyebrow">Decision at the playhead</p>
+              <h3 id="phase">Follow</h3>
+              <p id="verdict" class="verdict">Loading decision evidence.</p>
+              <dl id="readings" class="readings"></dl>
+              <ol id="tools" class="tools"></ol>
+            </div>
+          </div>
+          <div class="transport">
+            <button type="button" class="button secondary" id="play">Play</button>
+            <input type="range" min="0" max="0" value="0" id="seek" aria-label="Seek simulation time">
+            <button type="button" class="button secondary" id="next-event">Next event</button>
+          </div>
+          <div class="trace-foot"><p id="trace-summary"></p><a id="trace-link" href="data/example.json" download>Download telemetry</a></div>
+        </div>
+        <div id="trip-result" class="trip-result" hidden></div>
+      </div>
+    </section>
+
+    <section id="findings" class="findings section">
+      <div class="wrap">
+        <div class="section-intro">
+          <div><p class="eyebrow">Evaluation</p><h2>Inspect the trade-off.</h2></div>
+          <p>Each tested policy receives the same scenario inputs. Counts come from saved run records, including failed scenarios and unsatisfied expectations.</p>
+        </div>
+        <div class="bench-head"><label class="control">Experiment <select id="cohort"></select></label><a id="bench-evidence" href="https://github.com/r800360/autopass/tree/main/evidence">Raw records and methods</a></div>
+        <p id="cohort-note" class="muted"></p>
+        <div id="benchmark" class="benchmark"></div>
+      </div>
+    </section>
+
+    <section class="wrap section system" aria-labelledby="system-title">
+      <div class="section-intro"><div><p class="eyebrow">System design</p><h2 id="system-title">From pixels to a pass.</h2></div>
+        <p>The planner schedules observations. The critic checks their freshness, visibility, and maneuver feasibility before granting a pass proposal.</p>
+      </div>
+      <ol class="architecture">
+        <li><span class="node-icon" aria-hidden="true">◉</span><h3>Sense</h3><p>Project instance masks and depth into lane coordinates. Track gaps across frames.</p></li>
+        <li><span class="node-icon" aria-hidden="true">⋯</span><h3>Plan</h3><p>Choose tools to refresh a mutable belief. Compare rule-based and language-model planners.</p></li>
+        <li><span class="node-icon" aria-hidden="true">✓</span><h3>Verify</h3><p>Check sight distance, rear headway, the blind spot, and the available corridor.</p></li>
+        <li><span class="node-icon" aria-hidden="true">↝</span><h3>Execute</h3><p>Track waypoints, monitor changing gaps, and either merge back or abort.</p></li>
+      </ol>
+      <div class="document-links"><a href="https://github.com/r800360/autopass/blob/main/docs/SYSTEM.md">Read the architecture</a><a href="https://github.com/r800360/autopass/blob/main/docs/EVALUATION.md">Reproduce the experiments</a><a href="report.pdf">Download the release report</a></div>
+    </section>
+  </main>
+
+  <footer><div class="wrap footer-grid"><a class="wordmark" href="./"><img src="mark.svg" width="25" height="25" alt=""> AutoPass-Gen</a>
+    <p>Rohan Sachdeva, Xinwei Mai, Pranav Prabu, and Rathang Pandit</p>
+    <a href="https://github.com/r800360/autopass/blob/main/docs/CONTRIBUTIONS.md">Team contributions</a>
+  </div></footer>
+</body>
+</html>
