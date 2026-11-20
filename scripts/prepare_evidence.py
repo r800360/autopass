@@ -23,6 +23,7 @@ CLIPS = [
     ("blind", "s24", "Occupied blind spot", "The adjacent vehicle stays alongside. The ego holds the lane."),
     ("oncoming", "s19", "Oncoming traffic", "Inspect the sight-distance estimate and the final outcome."),
     ("abort", "s27", "Late oncoming traffic", "A staged late arrival tests the maneuver monitor."),
+    ("rural", "s13", "Clear opposing lane", "Watch how the available sight and road geometry affect the pass."),
 ]
 
 
@@ -54,8 +55,8 @@ def cohort(prefix, title, note, report: dict, output: Path):
     return {"id": prefix, "title": title, "note": note, "raw": target, "metrics": report["summary"]}
 
 
-def clip(prefix, sid, title, note, sources, output, compressed=False):
-    source = next((entry for base in sources for entry in sorted(base.glob(f"autopass/{sid}*/video.mp4"))
+def clip(prefix, sid, title, note, sources, output, compressed=False, policy="autopass"):
+    source = next((entry for base in sources for entry in sorted(base.glob(f"{policy}/{sid}*/video.mp4"))
                    if entry.with_name("telemetry.json.gz").is_file()), None)
     if source:
         from imageio_ffmpeg import get_ffmpeg_exe
@@ -127,6 +128,7 @@ def main():
         ("carla-ablation", "CARLA ablations", "Selected simulator runs using RGB-depth perception, imitation steering or baseline policies."),
         ("carla-rolling", "CARLA rolling-start diagnostic", "The first 1.5 s window still allowed an early fast-lead pass."),
         ("carla-stable", "CARLA stabilized start", "A 2.5 s observation window and fresh commit decisions."),
+        ("carla-commit", "CARLA commit guard", "Final check with map clearance revalidated at the proposal tick."),
         ("carla-localization", "CARLA localization regression", "Local route projection avoids large coordinate jumps on curved maps."),
     ):
         rows = recorded(source / folder)
@@ -154,8 +156,25 @@ def main():
         path = source/f"trip-{variant}.json"
         if path.exists():
             shutil.copyfile(path, out/"data"/path.name)
-    clips = [clip(*spec, (source/"carla-final", source/"verify"), out, compressed=args.refresh_video)
-             for spec in CLIPS]
+    clips = []
+    for spec in CLIPS:
+        captures = (source/"carla-final", source/"verify") if spec[0] == "rear" else (
+            source/"carla-stable", source/"carla-final", source/"verify")
+        clips.append(clip(*spec, captures, out, compressed=args.refresh_video))
+    if any((source/"carla-stable").glob("autopass/s17*/video.mp4")):
+        clips.append(clip("rear-diagnostic", "s17", "Rear traffic · corridor regression",
+                          "This captured run completed a late pass. At commit, the available corridor was shorter than the model required.",
+                          (source/"carla-stable",), out, compressed=args.refresh_video))
+    if any((source/"carla-ablation").glob("autopass_rgbd/s01*/video.mp4")):
+        clips.append(clip("rgbd", "s01", "Learned RGB-depth perception",
+                          "NanoDet identifies objects from RGB, with metric depth used for range.",
+                          (source/"carla-ablation",), out, compressed=args.refresh_video,
+                          policy="autopass_rgbd"))
+    model = next((r for r in lang if r["file"] == "data/model-s17-plan.json"), None)
+    if model:
+        clips.append({"id": "model-rear", "title": "Qwen tool planner · Closing rear traffic",
+                      "source": "Kinematic replay · Qwen 2.5 tool plan", "trace": model["file"],
+                      "note": "Watch model-selected probes, critic checks, and the executed decision."})
     runtime(out)
     write_json(out/"data/manifest.json", {
         "schema": 1, "edition": args.edition,

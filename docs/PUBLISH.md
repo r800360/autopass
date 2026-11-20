@@ -14,4 +14,4 @@ Push changes to main, verify CI, then dispatch the Pages workflow. It publishes 
 
 The Pages workflow runs on demand. Experiment evidence and maintenance commits leave the deployed shell in place. Use dated releases to keep downloadable milestones stable. Raw private captures belong in a local archive.
 
-Before publishing a new bundle, use `python -m http.server 8313 --bind 127.0.0.1 --directory site` and verify the video, timeline, a live browser simulation, a trip, and a mobile viewport.
+Generate the printable report with python scripts/render_report.py and print site/report.html to site/report.pdf. Before publishing a new bundle, use `python -m http.server 8313 --bind 127.0.0.1 --directory site` and verify the video, timeline, a live browser simulation, a trip, and a mobile viewport.

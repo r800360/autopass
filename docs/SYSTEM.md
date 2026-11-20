@@ -33,7 +33,7 @@ flowchart LR
 
 The mutable belief stores the latest observations, their simulation timestamps, probe order, and rejection history. A planner chooses from the tool palette, proposes a pass, or holds. The rule planner uses freshness and denial history. The model planner emits a schema-validated sequence or one tool at a time. Model timeouts hold, and requests have a per-run budget.
 
-The critic checks front evidence within 0.7 s and passing-lane, rear, and blind-spot evidence within 0.3 s. It requires the blind-spot check after rear and passing-lane queries even when they share a tick. It ages closing gaps conservatively and adds a margin to measured rear distance and speed. The corridor is rechecked within 2 s.
+The critic checks front evidence within 0.7 s and passing-lane, rear, and blind-spot evidence within 0.3 s. It requires the blind-spot check after rear and passing-lane queries even when they share a tick. It ages closing gaps conservatively and adds a margin to measured rear distance and speed. The planner refreshes the corridor within 2 s. At a proposal, the critic also caps cached geometry at the current pose.
 
 - **Warrant.** The allowed lead slowdown depends on urgency. Sufficient pull-out room is a separate gate.
 - **Rear.** At lane entry, leave a minimum gap and time headway. Bound the follower braking required after a modeled reaction delay.
@@ -57,5 +57,9 @@ stateDiagram-v2
 Waypoint steering and adaptive cruise run every 50 ms. The monitor can abandon an overtake while a visible return gap remains. A learned steering variant predicts a bounded command from geometric features and falls back outside its training envelope. Both use the same critic, speed controller, and phase logic.
 
 The trip demo extracts an intent over five simulated waypoints and runs the actual passing policy on each executed road segment. After observing delay and repeated denials, it recomputes shortest paths with updated travel times. Its environment stages one segment at a time. Turns, intersections, and continuous navigation between CARLA towns are outside this experiment.
+
+## Why this design matters
+
+A single clip answers whether a maneuver happened. A synchronized clip and decision trace show whether the planner selected the right evidence, whether perception resolved the hazard, and whether the controller executed the approved maneuver. This structure supports experiment design in research and regression triage in a robotics team.
 
 [Evaluation protocol](EVALUATION.md) · [CARLA setup](CARLA.md)

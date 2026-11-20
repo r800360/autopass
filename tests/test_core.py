@@ -183,3 +183,15 @@ def test_legacy_critic_accepts_half_second_old_evidence():
     b.corridor_legal = True
     assert not critic.stale_channels(b, 10.5, GateConfig.legacy())
     assert critic.stale_channels(b, 10.5, GateConfig())
+
+
+def test_current_corridor_caps_a_recent_observation():
+    from autopass.core.types import Corridor
+
+    cfg = GateConfig()
+    b = fresh_belief()
+    assert critic.verify(b, EGO, 10, 25, cfg).approved
+    now = Corridor(clear_m=50.0, legal=True)
+    v = critic.verify(b, EGO, 10, 25, cfg, corridor_now=now)
+    assert not v.approved and not v.gates.checks["corridor"]
+    assert b.corridor_clear_m == 1000.0

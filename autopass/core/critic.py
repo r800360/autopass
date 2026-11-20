@@ -11,7 +11,7 @@ from typing import List, Optional
 
 from .belief import Belief
 from .gates import GateConfig, GateInput, GateResult, evaluate  # noqa: F401 (evaluate re-exported)
-from .types import FRONT, REAR, EgoState
+from .types import FRONT, REAR, Corridor, EgoState
 
 TAU_GAP_S = 0.7        # front-gap evidence older than this is stale (and all evidence in legacy mode)
 TAU_HAZARD_S = 0.3     # rear / passing lane / blind spot must be this recent: traffic moves metres per 0.1 s
@@ -91,11 +91,16 @@ def stale_channels(b: Belief, now: float, cfg: GateConfig) -> List[str]:
     return out
 
 
-def verify(b: Belief, ego: EgoState, now: float, speed_limit: float, cfg: GateConfig) -> Verdict:
+def verify(b: Belief, ego: EgoState, now: float, speed_limit: float, cfg: GateConfig,
+           corridor_now: Optional[Corridor] = None) -> Verdict:
     stale = stale_channels(b, now, cfg)
     if stale:
         return Verdict(False, "not freshly sensed: " + ", ".join(stale), stale)
-    gates = evaluate(gate_input(b, ego, speed_limit, now), cfg)
+    candidate = gate_input(b, ego, speed_limit, now)
+    if corridor_now is not None and cfg.mode != "legacy":
+        candidate.corridor_clear = min(candidate.corridor_clear, corridor_now.clear_m)
+        candidate.corridor_legal = bool(candidate.corridor_legal and corridor_now.legal)
+    gates = evaluate(candidate, cfg)
     if not gates.can_pass:
         return Verdict(False, gates.blockers[0], [], gates)
     return Verdict(True, "all gates pass on fresh evidence", [], gates)

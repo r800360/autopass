@@ -140,7 +140,10 @@ class PassingAgent:
     def _judge(self, world: World, b: Belief) -> Tuple[bool, str, Dict[str, Any]]:
         if not self.cfg.use_critic:
             return True, "no critic (ablation): proposal accepted as is", {"approved": True, "reason": "no critic"}
-        v = critic.verify(b, world.ego(), world.time, world.speed_limit, self.cfg.gates)
+        cfg = self.cfg.gates
+        # Independently cap the cached geometric answer at the current pose.
+        current = world.corridor() if cfg.mode != "legacy" and not critic.stale_channels(b, world.time, cfg) else None
+        v = critic.verify(b, world.ego(), world.time, world.speed_limit, cfg, corridor_now=current)
         return v.approved, v.reason, v.as_dict()
 
     # -- ablation: an LLM decides directly, no critic, no gates ---------------------------

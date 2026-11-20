@@ -71,7 +71,10 @@ async function initialize() {
   byId("scenario").value = data.catalog.find((s) => s.id.startsWith("s17")).id;
   selectOptions(byId("cohort"), data.cohorts.map((c) => [c.id, c.title]));
   showCohort();
-  await openClip(data.clips[0].id);
+  const replay = new URLSearchParams(location.search).get("replay");
+  const first = data.clips.find(clip => clip.id === replay) || data.clips[0];
+  byId("replay-select").value = first.id;
+  await openClip(first.id);
 }
 
 function setActivity(text) {
