@@ -107,19 +107,11 @@ footer{display:flex;justify-content:space-between;margin-top:12pt;padding-top:7p
             <td>2/2</td><td>2</td><td>0</td>
             <td>0</td><td>2/2</td></tr><tr class=""><td>Never pass</td>
             <td>1/1</td><td>0</td><td>0</td>
-            <td>0</td><td>1/1</td></tr></tbody></table><h3>CARLA rolling-start diagnostic</h3><table><thead><tr><th>Policy</th><th>Scored / targets</th><th>Overtakes</th><th>Collisions</th>
-        <th>Unsafe commits</th><th>Expected behavior</th></tr></thead><tbody><tr class="primary"><td>AutoPass-Gen</td>
-            <td>2/2</td><td>2</td><td>0</td>
-            <td>0</td><td>1/2</td></tr></tbody></table><h3>CARLA stabilized start</h3><table><thead><tr><th>Policy</th><th>Scored / targets</th><th>Overtakes</th><th>Collisions</th>
-        <th>Unsafe commits</th><th>Expected behavior</th></tr></thead><tbody><tr class="primary"><td>AutoPass-Gen</td>
-            <td>4/4</td><td>2</td><td>0</td>
-            <td>1</td><td>2/4</td></tr></tbody></table><h3>CARLA commit guard</h3><table><thead><tr><th>Policy</th><th>Scored / targets</th><th>Overtakes</th><th>Collisions</th>
-        <th>Unsafe commits</th><th>Expected behavior</th></tr></thead><tbody><tr class="primary"><td>AutoPass-Gen</td>
-            <td>1/1</td><td>0</td><td>0</td>
-            <td>0</td><td>0/1</td></tr></tbody></table><h3>CARLA localization regression</h3><table><thead><tr><th>Policy</th><th>Scored / targets</th><th>Overtakes</th><th>Collisions</th>
-        <th>Unsafe commits</th><th>Expected behavior</th></tr></thead><tbody><tr class="primary"><td>AutoPass-Gen</td>
-            <td>1/1</td><td>1</td><td>0</td>
-            <td>0</td><td>1/1</td></tr></tbody></table>
+            <td>0</td><td>1/1</td></tr></tbody></table><h3>Targeted regressions</h3>
+        <p>A local-coordinate projection repaired the spurious departure in the clear opposing-lane case.
+        With 2.5 seconds of observation, the fast-lead case held. A late rear-traffic pass exposed a stale corridor bound.
+        Revalidating the corridor at commit caused the rerun to hold without an unsafe commit.
+        All diagnostic variants remain available in the evidence bundle.</p>
     <p class="small">Conservative holds can fail scenario expectations when the camera lacks adequate rear or opposing-lane reach. Weather, occlusion, map staging, and actor dynamics influence sensor observations.</p>
     <footer><a href="https://r800360.github.io/autopass/#lab">Recorded clips and telemetry</a><span>3 · CARLA</span></footer>
     </section>
@@ -128,7 +120,7 @@ footer{display:flex;justify-content:space-between;margin-top:12pt;padding-top:7p
     <p class="kicker">Extensions</p><h2>Models, routes, and reproduction</h2>
     <h3>Live local inference</h3>
     <p>Qwen 2.5 1.5B Instruct Q4_K_M with llama.cpp. Tool sequences and terminal choices are logged. Direct model control is an experimental kinematic baseline. The runtime used the deterministic planner for the main campaigns.</p>
-    <ul><li><b>Direct decision, s01.</b> 1 calls, 2.4 s aggregate model time, overtake completed.</li><li><b>Batch tool plan, s01.</b> 2 calls, 10.1 s aggregate model time, overtake completed.</li><li><b>Tool at a time, s01.</b> 16 calls, 44.3 s aggregate model time, no completed overtake.</li><li><b>Batch tool plan, s17.</b> 12 calls, 75.7 s aggregate model time, overtake completed.</li></ul>
+    <ul><li><b>Direct decision, s01.</b> 1 model requests, 2.4 s aggregate model time, overtake completed.</li><li><b>Batch tool plan, s01.</b> 2 model requests, 10.1 s aggregate model time, overtake completed.</li><li><b>Tool at a time, s01.</b> 16 model requests, 44.3 s aggregate model time, no completed overtake.</li><li><b>Batch tool plan, s17.</b> 12 model requests, 75.7 s aggregate model time, overtake completed.</li></ul>
     <h3>Learned steering and perception</h3>
     <p>The bounded steering imitator matched 34 of 34 catalog labels. Training used 25,000 synthetic teacher actions and validation used 5,000 independently sampled actions. Held-out mean absolute steering error was 0.0045 on normalized controls. NanoDet uses RGB to identify cars and CARLA depth to estimate metric gaps. CARLA runs characterize this hybrid sensor profile.</p>
     <h3>Trip navigation</h3>

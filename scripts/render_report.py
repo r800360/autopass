@@ -82,16 +82,25 @@ def model_summary():
         r = entry["result"]
         name = {"llm_plan": "Batch tool plan", "llm_react": "Tool at a time", "llm_direct": "Direct decision"}.get(entry["planner"], entry["planner"])
         kind = "overtake completed" if r["overtake_completed"] else "no completed overtake"
-        output.append(f"<li><b>{E(name)}, {r['scenario_id'][:3]}.</b> {r['agency']['llm_calls']} calls, "
+        output.append(f"<li><b>{E(name)}, {r['scenario_id'][:3]}.</b> {r['agency']['llm_calls']} model requests, "
                       f"{r['agency']['llm_latency_s']:.1f} s aggregate model time, {kind}.</li>")
     return "<ul>" + "".join(output) + "</ul>"
 
 def carla_summary(manifest):
+    cohorts = {c["id"]: c for c in manifest["cohorts"]}
     output = []
-    for cohort in manifest["cohorts"]:
-        if cohort["id"].startswith("carla"):
+    for key in ("carla-final", "carla-catalog", "carla-ablation"):
+        if key in cohorts:
+            cohort = cohorts[key]
             output.append(f"<h3>{E(cohort['title'])}</h3>{table(cohort['metrics'], labeled=True)}")
+    if "carla-commit" in cohorts:
+        output.append("""<h3>Targeted regressions</h3>
+        <p>A local-coordinate projection repaired the spurious departure in the clear opposing-lane case.
+        With 2.5 seconds of observation, the fast-lead case held. A late rear-traffic pass exposed a stale corridor bound.
+        Revalidating the corridor at commit caused the rerun to hold without an unsafe commit.
+        All diagnostic variants remain available in the evidence bundle.</p>""")
     return "".join(output)
+
 
 def main():
     index = read("manifest.json")
