@@ -3,12 +3,12 @@
     "origin": "Depot",
     "destination": "Clinic",
     "urgency": "high",
-    "deadline_s": 40
+    "deadline_s": 33
   },
   "replan": false,
   "arrived": true,
   "elapsed_s": 34.9,
-  "deadline_met": true,
+  "deadline_met": false,
   "trace": [
     {
       "kind": "plan",

@@ -107,10 +107,19 @@ footer{display:flex;justify-content:space-between;margin-top:12pt;padding-top:7p
             <td>2/2</td><td>2</td><td>0</td>
             <td>0</td><td>2/2</td></tr><tr class=""><td>Never pass</td>
             <td>1/1</td><td>0</td><td>0</td>
-            <td>0</td><td>1/1</td></tr></tbody></table><h3>CARLA rolling-start regression</h3><table><thead><tr><th>Policy</th><th>Scored / targets</th><th>Overtakes</th><th>Collisions</th>
+            <td>0</td><td>1/1</td></tr></tbody></table><h3>CARLA rolling-start diagnostic</h3><table><thead><tr><th>Policy</th><th>Scored / targets</th><th>Overtakes</th><th>Collisions</th>
         <th>Unsafe commits</th><th>Expected behavior</th></tr></thead><tbody><tr class="primary"><td>AutoPass-Gen</td>
             <td>2/2</td><td>2</td><td>0</td>
-            <td>0</td><td>1/2</td></tr></tbody></table>
+            <td>0</td><td>1/2</td></tr></tbody></table><h3>CARLA stabilized start</h3><table><thead><tr><th>Policy</th><th>Scored / targets</th><th>Overtakes</th><th>Collisions</th>
+        <th>Unsafe commits</th><th>Expected behavior</th></tr></thead><tbody><tr class="primary"><td>AutoPass-Gen</td>
+            <td>4/4</td><td>2</td><td>0</td>
+            <td>1</td><td>2/4</td></tr></tbody></table><h3>CARLA commit guard</h3><table><thead><tr><th>Policy</th><th>Scored / targets</th><th>Overtakes</th><th>Collisions</th>
+        <th>Unsafe commits</th><th>Expected behavior</th></tr></thead><tbody><tr class="primary"><td>AutoPass-Gen</td>
+            <td>1/1</td><td>0</td><td>0</td>
+            <td>0</td><td>0/1</td></tr></tbody></table><h3>CARLA localization regression</h3><table><thead><tr><th>Policy</th><th>Scored / targets</th><th>Overtakes</th><th>Collisions</th>
+        <th>Unsafe commits</th><th>Expected behavior</th></tr></thead><tbody><tr class="primary"><td>AutoPass-Gen</td>
+            <td>1/1</td><td>1</td><td>0</td>
+            <td>0</td><td>1/1</td></tr></tbody></table>
     <p class="small">Conservative holds can fail scenario expectations when the camera lacks adequate rear or opposing-lane reach. Weather, occlusion, map staging, and actor dynamics influence sensor observations.</p>
     <footer><a href="https://r800360.github.io/autopass/#lab">Recorded clips and telemetry</a><span>3 · CARLA</span></footer>
     </section>

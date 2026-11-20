@@ -3,7 +3,7 @@
     "origin": "Depot",
     "destination": "Clinic",
     "urgency": "high",
-    "deadline_s": 40
+    "deadline_s": 33
   },
   "replan": true,
   "arrived": true,
